@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Listing, OfferStatus, OFFER_STATUS_LABELS } from '@/types/listing';
+import { Listing, OFFER_STATUS_LABELS } from '@/types/listing';
 
 export default function AdminPage() {
   const params = useParams();
@@ -19,7 +19,6 @@ export default function AdminPage() {
 
   const [formData, setFormData] = useState({
     description: '',
-    offerStatus: 'no_offers' as OfferStatus,
     offerDeadline: '',
     reviewWindow: '',
   });
@@ -34,7 +33,6 @@ export default function AdminPage() {
       setListing(data);
       setFormData({
         description: data.description || '',
-        offerStatus: data.offerStatus,
         offerDeadline: data.offerDeadline
           ? new Date(data.offerDeadline).toISOString().slice(0, 16)
           : '',
@@ -78,7 +76,6 @@ export default function AdminPage() {
         },
         body: JSON.stringify({
           description: formData.description || undefined,
-          offerStatus: formData.offerStatus,
           offerDeadline: formData.offerDeadline
             ? new Date(formData.offerDeadline).toISOString()
             : undefined,
@@ -101,7 +98,7 @@ export default function AdminPage() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -186,7 +183,7 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
-            <div>
+            <div className="flex-1">
               <h2 className="text-xl font-semibold text-gray-900">{listing.address}</h2>
               <p className="text-gray-600">
                 {listing.city}, {listing.state} {listing.zip}
@@ -202,6 +199,16 @@ export default function AdminPage() {
                     .join(' | ')}
                 </p>
               )}
+              {/* Current Offer Status - Auto-updated */}
+              <div className="mt-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Current Status</p>
+                <p className="mt-1 inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+                  {OFFER_STATUS_LABELS[listing.offerStatus]}
+                </p>
+                <p className="mt-1 text-xs text-gray-500">
+                  Status updates automatically as offers are received
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -235,28 +242,6 @@ export default function AdminPage() {
                   className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   placeholder="Brief description of the property..."
                 />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="offerStatus"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Offer Status
-                </label>
-                <select
-                  id="offerStatus"
-                  name="offerStatus"
-                  value={formData.offerStatus}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
-                  {Object.entries(OFFER_STATUS_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <div>
