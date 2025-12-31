@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createOffer, getListing } from '@/lib/data';
+import { createOffer } from '@/lib/data';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,20 +14,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const listing = getListing(listingId);
-    if (!listing) {
-      return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
-    }
-
+    // createOffer auto-creates listing if needed - no validation required
     const offer = createOffer(listingId, {
       buyerAgentName,
       buyerAgentLicense,
       buyerAgentEmail,
     });
-
-    if (!offer) {
-      return NextResponse.json({ error: 'Failed to create offer' }, { status: 500 });
-    }
 
     return NextResponse.json(
       {

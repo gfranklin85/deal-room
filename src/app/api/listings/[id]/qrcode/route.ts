@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getListing } from '@/lib/data';
 import { generateQRCodeDataURL, getLobbyUrl } from '@/lib/qrcode';
 
 interface RouteParams {
@@ -8,12 +7,8 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { id } = await params;
-  const listing = getListing(id);
 
-  if (!listing) {
-    return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
-  }
-
+  // Generate QR for any valid ID - no validation needed
   try {
     // Get the base URL from the request headers
     const protocol = request.headers.get('x-forwarded-proto') || 'http';

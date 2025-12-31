@@ -48,6 +48,34 @@ export function createListing(data: Omit<Listing, 'id' | 'createdAt' | 'updatedA
   return listing;
 }
 
+// Create a minimal listing with a specific ID (for auto-creation)
+export function createListingWithId(id: string, data?: Partial<Listing>): Listing {
+  const now = new Date().toISOString();
+  const listing: Listing = {
+    id,
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    primaryPhoto: '',
+    offerStatus: 'no_offers',
+    showOfferCount: false,
+    createdAt: now,
+    updatedAt: now,
+    ...data,
+  };
+  listings.set(id, listing);
+  offers.set(id, []);
+  return listing;
+}
+
+// Get listing or create empty shell
+export function getOrCreateListing(id: string): Listing {
+  const existing = listings.get(id);
+  if (existing) return existing;
+  return createListingWithId(id);
+}
+
 export function updateListing(id: string, data: Partial<Listing>): Listing | undefined {
   const existing = listings.get(id);
   if (!existing) return undefined;
@@ -69,9 +97,12 @@ export function getOffers(listingId: string): Offer[] {
 export function createOffer(
   listingId: string,
   data: Omit<Offer, 'id' | 'listingId' | 'submittedAt'>
-): Offer | undefined {
-  const listing = listings.get(listingId);
-  if (!listing) return undefined;
+): Offer {
+  // Auto-create listing if it doesn't exist
+  let listing = listings.get(listingId);
+  if (!listing) {
+    listing = createListingWithId(listingId);
+  }
 
   const offer: Offer = {
     ...data,

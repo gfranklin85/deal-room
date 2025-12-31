@@ -7,11 +7,15 @@ import Image from 'next/image';
 import Header from '@/components/Header';
 import { Listing, OFFER_STATUS_LABELS } from '@/types/listing';
 
+interface ListingWithExists extends Listing {
+  exists?: boolean;
+}
+
 export default function AdminPage() {
   const params = useParams();
   const listingId = params.id as string;
 
-  const [listing, setListing] = useState<Listing | null>(null);
+  const [listing, setListing] = useState<ListingWithExists | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +23,10 @@ export default function AdminPage() {
   const [qrCode, setQrCode] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
     description: '',
     offerDeadline: '',
     reviewWindow: '',
@@ -28,21 +36,26 @@ export default function AdminPage() {
   const fetchListing = useCallback(async () => {
     try {
       const response = await fetch(`/api/listings/${listingId}`);
-      if (!response.ok) {
-        throw new Error('Listing not found');
-      }
       const data = await response.json();
       setListing(data);
-      setFormData({
-        description: data.description || '',
-        offerDeadline: data.offerDeadline
-          ? new Date(data.offerDeadline).toISOString().slice(0, 16)
-          : '',
-        reviewWindow: data.reviewWindow || '',
-        showOfferCount: data.showOfferCount || false,
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load listing');
+      // Only populate form if listing has data
+      if (data.exists) {
+        setFormData({
+          address: data.address || '',
+          city: data.city || '',
+          state: data.state || '',
+          zip: data.zip || '',
+          description: data.description || '',
+          offerDeadline: data.offerDeadline
+            ? new Date(data.offerDeadline).toISOString().slice(0, 16)
+            : '',
+          reviewWindow: data.reviewWindow || '',
+          showOfferCount: data.showOfferCount || false,
+        });
+      }
+    } catch {
+      // API always returns data, this shouldn't happen
+      setListing({ id: listingId, address: '', city: '', state: '', zip: '', primaryPhoto: '', offerStatus: 'no_offers', showOfferCount: false, exists: false, createdAt: '', updatedAt: '' });
     } finally {
       setLoading(false);
     }
@@ -78,6 +91,10 @@ export default function AdminPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          address: formData.address || undefined,
+          city: formData.city || undefined,
+          state: formData.state || undefined,
+          zip: formData.zip || undefined,
           description: formData.description || undefined,
           offerDeadline: formData.offerDeadline
             ? new Date(formData.offerDeadline).toISOString()
@@ -139,11 +156,180 @@ export default function AdminPage() {
       <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
         <Header />
         <div className="flex flex-1 items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-slate-900">Listing Not Found</h1>
-            <Link href="/" className="mt-4 inline-block text-lg text-blue-600 hover:underline">
-              Go Home
-            </Link>
+          <div className="text-lg text-slate-600">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Setup form for new Deal Rooms
+  if (!listing.exists) {
+    return (
+      <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
+        <Header />
+
+        <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
+          <div className="mb-8 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+              <svg className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900">Set Up Your Deal Room</h1>
+            <p className="mt-2 text-lg text-slate-600">
+              Add property details to get started. Offers can be submitted to this Deal Room at any time.
+            </p>
+            <p className="mt-2 font-mono text-sm text-slate-500">
+              ID: {listingId}
+            </p>
+          </div>
+
+          {/* Alerts */}
+          {error && (
+            <div className="mb-6 flex items-center gap-3 rounded-xl bg-red-50 px-4 py-4 text-base text-red-700">
+              <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="mb-6 flex items-center gap-3 rounded-xl bg-green-50 px-4 py-4 text-base text-green-700">
+              <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              {success}
+            </div>
+          )}
+
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50 sm:p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Property Address */}
+              <div>
+                <label htmlFor="address" className="block text-base font-medium text-slate-700">
+                  Street Address
+                </label>
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  placeholder="123 Main Street"
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="sm:col-span-1">
+                  <label htmlFor="city" className="block text-base font-medium text-slate-700">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    placeholder="City"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="state" className="block text-base font-medium text-slate-700">
+                    State
+                  </label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    value={formData.state}
+                    onChange={handleChange}
+                    className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    placeholder="CA"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="zip" className="block text-base font-medium text-slate-700">
+                    ZIP
+                  </label>
+                  <input
+                    type="text"
+                    id="zip"
+                    name="zip"
+                    value={formData.zip}
+                    onChange={handleChange}
+                    className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    placeholder="90210"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="description" className="block text-base font-medium text-slate-700">
+                  Description (optional)
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={3}
+                  className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  placeholder="Brief description of the property..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="offerDeadline" className="block text-base font-medium text-slate-700">
+                  Offer Deadline (optional)
+                </label>
+                <input
+                  type="datetime-local"
+                  id="offerDeadline"
+                  name="offerDeadline"
+                  value={formData.offerDeadline}
+                  onChange={handleChange}
+                  className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={saving}
+                className="w-full rounded-xl bg-gradient-to-r from-blue-900 to-blue-800 px-6 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {saving ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Creating...
+                  </span>
+                ) : (
+                  'Create Deal Room'
+                )}
+              </button>
+            </form>
+
+            <div className="mt-6 rounded-xl bg-slate-50 p-4">
+              <p className="text-sm text-slate-600">
+                <strong>Note:</strong> Offers can be submitted to this Deal Room even before you add property details.
+                The lobby is already live at:
+              </p>
+              <div className="mt-2 flex items-center gap-2">
+                <code className="flex-1 truncate rounded bg-slate-200 px-2 py-1 text-xs text-slate-700">
+                  {lobbyUrl}
+                </code>
+                <button
+                  onClick={copyToClipboard}
+                  className="flex-shrink-0 rounded-lg bg-slate-200 px-3 py-1 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-300"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
