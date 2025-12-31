@@ -72,3 +72,14 @@ body {
   box-shadow: 0 8px 25px -5px var(--accent-glow), 0 10px 20px -10px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
+
+/* FAQ Accordion animation */
+.faq-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.faq-content.open {
+  grid-template-rows: 1fr;
+}
