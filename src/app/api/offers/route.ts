@@ -30,7 +30,12 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { message: 'Offer submitted successfully', offerId: offer.id },
+      {
+        success: true,
+        message: 'Offer submitted successfully',
+        offerId: offer.id,
+        submittedAt: offer.submittedAt,
+      },
       { status: 201 }
     );
   } catch {

@@ -19,6 +19,7 @@ export interface Listing {
   offerStatus: OfferStatus;
   offerDeadline?: string; // ISO date string
   reviewWindow?: string; // e.g., "Friday 2pm-5pm"
+  showOfferCount?: boolean; // Whether to display offer count publicly
   createdAt: string;
   updatedAt: string;
 }

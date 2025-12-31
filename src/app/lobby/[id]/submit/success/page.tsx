@@ -1,12 +1,43 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
+import { useParams, useSearchParams } from 'next/navigation';
+import { format, parseISO } from 'date-fns';
 import Header from '@/components/Header';
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+export default function SubmitSuccessPage() {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const id = params.id as string;
 
-export default async function SubmitSuccessPage({ params }: PageProps) {
-  const { id } = await params;
+  const receiptId = searchParams.get('receiptId') || 'N/A';
+  const timestamp = searchParams.get('timestamp');
+  const formattedTimestamp = timestamp
+    ? format(parseISO(timestamp), "MMMM d, yyyy 'at' h:mm:ss a")
+    : 'Just now';
+
+  const [copied, setCopied] = useState(false);
+
+  const receiptText = `Deal Room Receipt\n\nReceipt ID: ${receiptId}\nSubmission Time: ${formattedTimestamp}\n\nThis confirms your offer has been received and time-stamped.`;
+
+  const handleCopyReceipt = async () => {
+    try {
+      await navigator.clipboard.writeText(receiptText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = receiptText;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
@@ -27,7 +58,45 @@ export default async function SubmitSuccessPage({ params }: PageProps) {
           </div>
 
           <div className="p-6 sm:p-8">
-            <div className="rounded-xl bg-blue-50 p-5 text-left">
+            {/* Receipt Details */}
+            <div className="rounded-xl bg-slate-50 p-5 text-left ring-1 ring-slate-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-semibold text-slate-900">Submission Receipt</h2>
+                <button
+                  onClick={handleCopyReceipt}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-slate-600 ring-1 ring-slate-200 transition-colors hover:bg-slate-100"
+                >
+                  {copied ? (
+                    <>
+                      <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      Copy
+                    </>
+                  )}
+                </button>
+              </div>
+              <dl className="mt-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <dt className="w-28 flex-shrink-0 text-sm text-slate-500">Receipt ID</dt>
+                  <dd className="font-mono text-sm font-medium text-slate-900">{receiptId}</dd>
+                </div>
+                <div className="flex items-start gap-3">
+                  <dt className="w-28 flex-shrink-0 text-sm text-slate-500">Submitted</dt>
+                  <dd className="text-sm font-medium text-slate-900">{formattedTimestamp}</dd>
+                </div>
+              </dl>
+            </div>
+
+            {/* What happens next */}
+            <div className="mt-6 rounded-xl bg-blue-50 p-5 text-left">
               <h2 className="text-base font-semibold text-blue-900">What happens next?</h2>
               <ul className="mt-4 space-y-3 text-base text-blue-800">
                 <li className="flex items-start gap-3">
@@ -61,6 +130,21 @@ export default async function SubmitSuccessPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {/* Print Styles */}
+      <style jsx global>{`
+        @media print {
+          .flex.min-h-screen {
+            background: white !important;
+          }
+          header, button, a {
+            display: none !important;
+          }
+          .shadow-sm, .shadow-xl {
+            box-shadow: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

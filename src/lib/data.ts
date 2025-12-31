@@ -18,6 +18,7 @@ const sampleListing: Listing = {
   baths: 2,
   sqft: 2200,
   offerStatus: 'no_offers',
+  showOfferCount: false,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 };

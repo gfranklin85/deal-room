@@ -1,10 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getListing } from '@/lib/data';
+import { getListing, getOfferCount } from '@/lib/data';
 import { OFFER_STATUS_LABELS, OfferStatus } from '@/types/listing';
-import { format, isPast, parseISO } from 'date-fns';
+import { isPast, parseISO } from 'date-fns';
 import Header from '@/components/Header';
+import CountdownTimer from '@/components/CountdownTimer';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -37,6 +38,7 @@ export default async function LobbyPage({ params }: PageProps) {
 
   const deadlinePassed = listing.offerDeadline && isPast(parseISO(listing.offerDeadline));
   const currentStatus = deadlinePassed ? 'deadline_passed' : listing.offerStatus;
+  const offerCount = listing.showOfferCount ? getOfferCount(id) : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
@@ -89,13 +91,16 @@ export default async function LobbyPage({ params }: PageProps) {
                     <span className={`inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium ${getStatusStyle(currentStatus)}`}>
                       {OFFER_STATUS_LABELS[currentStatus]}
                     </span>
-                    {listing.offerDeadline && (
-                      <div className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-sm text-blue-800">
+                    {offerCount !== null && offerCount > 0 && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1.5 text-sm font-medium text-green-800">
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span><span className="font-medium">Deadline:</span> {format(parseISO(listing.offerDeadline), 'MMM d \'at\' h:mm a')}</span>
-                      </div>
+                        {offerCount} {offerCount === 1 ? 'offer' : 'offers'} received
+                      </span>
+                    )}
+                    {listing.offerDeadline && (
+                      <CountdownTimer deadline={listing.offerDeadline} />
                     )}
                   </div>
                 </div>

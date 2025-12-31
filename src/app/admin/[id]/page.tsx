@@ -22,6 +22,7 @@ export default function AdminPage() {
     description: '',
     offerDeadline: '',
     reviewWindow: '',
+    showOfferCount: false,
   });
 
   const fetchListing = useCallback(async () => {
@@ -38,6 +39,7 @@ export default function AdminPage() {
           ? new Date(data.offerDeadline).toISOString().slice(0, 16)
           : '',
         reviewWindow: data.reviewWindow || '',
+        showOfferCount: data.showOfferCount || false,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load listing');
@@ -81,6 +83,7 @@ export default function AdminPage() {
             ? new Date(formData.offerDeadline).toISOString()
             : undefined,
           reviewWindow: formData.reviewWindow || undefined,
+          showOfferCount: formData.showOfferCount,
         }),
       });
 
@@ -289,6 +292,38 @@ export default function AdminPage() {
                   className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   placeholder="e.g., Friday 2pm-5pm"
                 />
+              </div>
+
+              {/* Offer Count Toggle */}
+              <div className="rounded-xl bg-slate-50 p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-6 items-center">
+                    <input
+                      type="checkbox"
+                      id="showOfferCount"
+                      name="showOfferCount"
+                      checked={formData.showOfferCount}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          showOfferCount: e.target.checked,
+                        }))
+                      }
+                      className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="showOfferCount"
+                      className="block text-base font-medium text-slate-900"
+                    >
+                      Show offer count publicly
+                    </label>
+                    <p className="mt-1 text-sm text-slate-500">
+                      Display the number of offers received on the lobby page
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <button

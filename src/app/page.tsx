@@ -38,18 +38,27 @@ export default function LandingPage() {
             <p className="mt-6 max-w-2xl text-xl text-slate-600">
               One place for all offers. Time-stamped. Auditable. Fair.
             </p>
-            <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <Link
                 href="/admin/new"
                 className="inline-flex items-center justify-center rounded-xl bg-blue-900 px-8 py-4 text-lg font-semibold text-white cta-glow hover:bg-blue-800"
               >
-                Get started free
+                Create a lobby
               </Link>
               <Link
                 href="/lobby/demo-123"
-                className="inline-flex items-center gap-2 px-6 py-4 text-lg text-slate-600 transition-colors hover:text-slate-900"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-4 text-lg font-medium text-slate-700 ring-1 ring-slate-200 transition-colors hover:bg-slate-50"
               >
-                View a sample
+                <svg className="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Submit an offer
+              </Link>
+              <Link
+                href="/lobby/demo-123"
+                className="inline-flex items-center gap-2 px-4 py-4 text-lg text-slate-500 transition-colors hover:text-slate-700"
+              >
+                View demo
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -78,8 +87,27 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Status Panel */}
+        <section className="border-y border-slate-100 bg-white py-8">
+          <div className="mx-auto max-w-4xl px-6">
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                <span className="flex h-2.5 w-2.5 rounded-full bg-green-500"></span>
+                <span>Platform status: All systems operational</span>
+              </div>
+              <div className="hidden h-4 w-px bg-slate-200 sm:block"></div>
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Submission windows: Open</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Stats Section */}
-        <section className="border-y border-slate-100 bg-white py-12">
+        <section className="border-b border-slate-100 bg-slate-50/50 py-12">
           <div className="mx-auto max-w-4xl px-6">
             <div className="grid grid-cols-3 gap-8 text-center">
               <div>
@@ -171,6 +199,80 @@ export default function LandingPage() {
                 </h3>
                 <p className="mt-3 text-slate-600">
                   Clear deadlines. Review windows. No surprises.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Role-Specific Section */}
+        <section className="py-20 sm:py-24">
+          <div className="mx-auto max-w-5xl px-6">
+            <p className="text-center text-sm font-semibold uppercase tracking-widest text-blue-800">
+              For everyone in the transaction
+            </p>
+            <h2 className="mt-4 text-center text-3xl font-bold text-slate-900 sm:text-4xl">
+              Built for real estate professionals
+            </h2>
+
+            <div className="mt-16 grid gap-6 sm:grid-cols-3">
+              {/* Listing Agents */}
+              <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 p-6 ring-1 ring-blue-100">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600">
+                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+                <h3 className="mt-5 text-lg font-semibold text-slate-900">Listing Agents</h3>
+                <p className="mt-3 text-base text-slate-600">
+                  Create a fair submission link in seconds. Share one official channel for all offers.
+                </p>
+                <Link
+                  href="/admin/new"
+                  className="mt-5 inline-flex items-center gap-1 text-base font-medium text-blue-700 hover:text-blue-800"
+                >
+                  Create a lobby
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+
+              {/* Buyer Agents */}
+              <div className="rounded-2xl bg-gradient-to-br from-green-50 to-green-100/50 p-6 ring-1 ring-green-100">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-600">
+                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="mt-5 text-lg font-semibold text-slate-900">Buyer Agents</h3>
+                <p className="mt-3 text-base text-slate-600">
+                  Upload offers for your clients through the official channel. Get time-stamped confirmation.
+                </p>
+                <Link
+                  href="/lobby/demo-123"
+                  className="mt-5 inline-flex items-center gap-1 text-base font-medium text-green-700 hover:text-green-800"
+                >
+                  See how it works
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+
+              {/* Buyers */}
+              <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 p-6 ring-1 ring-amber-100">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-600">
+                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <h3 className="mt-5 text-lg font-semibold text-slate-900">Buyers</h3>
+                <p className="mt-3 text-base text-slate-600">
+                  Submit your offer securely. Know it was received with an official time-stamped receipt.
+                </p>
+                <p className="mt-5 text-sm text-slate-500">
+                  Your agent will share the lobby link with you
                 </p>
               </div>
             </div>

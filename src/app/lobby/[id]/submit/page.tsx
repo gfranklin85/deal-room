@@ -70,12 +70,18 @@ export default function SubmitOfferPage() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.error || 'Failed to submit offer');
       }
 
-      router.push(`/lobby/${listingId}/submit/success`);
+      // Pass receipt data to success page via URL params
+      const successParams = new URLSearchParams({
+        receiptId: data.offerId,
+        timestamp: data.submittedAt,
+      });
+      router.push(`/lobby/${listingId}/submit/success?${successParams.toString()}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       setIsSubmitting(false);
