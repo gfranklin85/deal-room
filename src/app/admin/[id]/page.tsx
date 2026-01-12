@@ -91,6 +91,7 @@ export default function AdminPage() {
       const updated = await response.json();
       setListing(updated);
       setSuccess('Listing updated successfully');
+      setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -122,10 +123,10 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
         <Header />
-        <div className="flex flex-1 items-center justify-center">
-          <div className="text-lg text-slate-600">Loading...</div>
+        <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
+          <div className="text-lg text-slate-500">Loading...</div>
         </div>
       </div>
     );
@@ -133,9 +134,9 @@ export default function AdminPage() {
 
   if (!listing) {
     return (
-      <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
         <Header />
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-slate-900">Listing Not Found</h1>
             <Link href="/" className="mt-4 inline-block text-lg text-blue-600 hover:underline">
@@ -148,28 +149,32 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
       <Header />
 
-      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-900">Listing Admin</h1>
+      <div className="mx-auto max-w-6xl px-6 py-10">
+        {/* Page Header */}
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Listing Admin</h1>
+            <p className="mt-1 text-slate-600">Manage your Deal Room settings</p>
+          </div>
           <Link
             href={`/lobby/${listingId}`}
-            className="inline-flex items-center gap-2 rounded-xl bg-blue-100 px-4 py-2 text-base font-medium text-blue-800 transition-colors hover:bg-blue-200"
+            className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-xl"
             target="_blank"
           >
             View Lobby
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
           </Link>
         </div>
 
-        {/* Listing Info */}
-        <div className="mb-8 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/50">
-          <div className="flex flex-col sm:flex-row">
-            <div className="relative h-40 w-full bg-gradient-to-br from-slate-200 to-slate-300 sm:h-auto sm:w-56 sm:flex-shrink-0 lg:w-64">
+        {/* Property Card */}
+        <div className="mb-8 overflow-hidden rounded-3xl bg-white shadow-lg shadow-slate-200/50 ring-1 ring-slate-100">
+          <div className="flex flex-col md:flex-row">
+            <div className="relative h-48 w-full bg-gradient-to-br from-slate-100 to-slate-200 md:h-auto md:w-72">
               {listing.primaryPhoto ? (
                 <Image
                   src={listing.primaryPhoto}
@@ -179,34 +184,43 @@ export default function AdminPage() {
                 />
               ) : (
                 <div className="flex h-full items-center justify-center">
-                  <svg className="h-16 w-16 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/80 shadow">
+                    <svg className="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                  </div>
                 </div>
               )}
             </div>
-            <div className="flex-1 p-5 sm:p-6">
+            <div className="flex-1 p-6 md:p-8">
               <h2 className="text-2xl font-bold text-slate-900">{listing.address}</h2>
               <p className="mt-1 text-lg text-slate-600">
                 {listing.city}, {listing.state} {listing.zip}
               </p>
               {(listing.beds || listing.baths || listing.sqft) && (
-                <p className="mt-3 text-base text-slate-500">
-                  {[
-                    listing.beds && `${listing.beds} beds`,
-                    listing.baths && `${listing.baths} baths`,
-                    listing.sqft && `${listing.sqft.toLocaleString()} sqft`,
-                  ]
-                    .filter(Boolean)
-                    .join(' | ')}
-                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {listing.beds && (
+                    <span className="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700">
+                      {listing.beds} beds
+                    </span>
+                  )}
+                  {listing.baths && (
+                    <span className="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700">
+                      {listing.baths} baths
+                    </span>
+                  )}
+                  {listing.sqft && (
+                    <span className="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700">
+                      {listing.sqft.toLocaleString()} sqft
+                    </span>
+                  )}
+                </div>
               )}
-              {/* Current Offer Status - Auto-updated */}
-              <div className="mt-4">
-                <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Current Status</p>
-                <p className="mt-2 inline-flex items-center rounded-full bg-blue-100 px-4 py-2 text-base font-medium text-blue-800">
+              <div className="mt-5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Current Status</p>
+                <span className="mt-2 inline-flex items-center rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
                   {OFFER_STATUS_LABELS[listing.offerStatus]}
-                </p>
+                </span>
                 <p className="mt-2 text-sm text-slate-500">
                   Status updates automatically as offers are received
                 </p>
@@ -217,32 +231,33 @@ export default function AdminPage() {
 
         {/* Alerts */}
         {error && (
-          <div className="mb-6 flex items-center gap-3 rounded-xl bg-red-50 px-4 py-4 text-base text-red-700">
-            <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {error}
+          <div className="mb-6 flex items-center gap-3 rounded-2xl bg-red-50 px-5 py-4 ring-1 ring-red-100">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-red-100">
+              <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p className="text-base text-red-700">{error}</p>
           </div>
         )}
         {success && (
-          <div className="mb-6 flex items-center gap-3 rounded-xl bg-green-50 px-4 py-4 text-base text-green-700">
-            <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            {success}
+          <div className="mb-6 flex items-center gap-3 rounded-2xl bg-emerald-50 px-5 py-4 ring-1 ring-emerald-100">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100">
+              <svg className="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <p className="text-base text-emerald-700">{success}</p>
           </div>
         )}
 
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Settings Form */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50 sm:p-8">
+          <div className="rounded-3xl bg-white p-8 shadow-lg shadow-slate-200/50 ring-1 ring-slate-100">
             <h2 className="mb-6 text-xl font-semibold text-slate-900">Listing Settings</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label
-                  htmlFor="description"
-                  className="block text-base font-medium text-slate-700"
-                >
+                <label htmlFor="description" className="block text-sm font-medium text-slate-700">
                   Description
                 </label>
                 <textarea
@@ -251,16 +266,13 @@ export default function AdminPage() {
                   value={formData.description}
                   onChange={handleChange}
                   rows={3}
-                  className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-1.5 block w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-base text-slate-900 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500"
                   placeholder="Brief description of the property..."
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="offerDeadline"
-                  className="block text-base font-medium text-slate-700"
-                >
+                <label htmlFor="offerDeadline" className="block text-sm font-medium text-slate-700">
                   Offer Deadline (optional)
                 </label>
                 <input
@@ -269,15 +281,12 @@ export default function AdminPage() {
                   name="offerDeadline"
                   value={formData.offerDeadline}
                   onChange={handleChange}
-                  className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-1.5 block w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-base text-slate-900 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="reviewWindow"
-                  className="block text-base font-medium text-slate-700"
-                >
+                <label htmlFor="reviewWindow" className="block text-sm font-medium text-slate-700">
                   Review Window (optional)
                 </label>
                 <input
@@ -286,7 +295,7 @@ export default function AdminPage() {
                   name="reviewWindow"
                   value={formData.reviewWindow}
                   onChange={handleChange}
-                  className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-1.5 block w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-base text-slate-900 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., Friday 2pm-5pm"
                 />
               </div>
@@ -294,7 +303,7 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full rounded-xl bg-gradient-to-r from-blue-900 to-blue-800 px-6 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-6 py-4 text-lg font-semibold text-white shadow-xl shadow-blue-500/25 transition-all hover:shadow-2xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:transform-none"
               >
                 {saving ? (
                   <span className="flex items-center justify-center gap-2">
@@ -313,14 +322,18 @@ export default function AdminPage() {
 
           {/* Share Section */}
           <div className="space-y-6">
-            <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50 sm:p-8">
+            {/* Share Link Card */}
+            <div className="rounded-3xl bg-white p-8 shadow-lg shadow-slate-200/50 ring-1 ring-slate-100">
               <h2 className="mb-4 text-xl font-semibold text-slate-900">Share Link</h2>
+              <p className="mb-4 text-sm text-slate-600">
+                Share this link with buyers to submit their offers
+              </p>
               <div className="flex gap-3">
                 <input
                   type="text"
                   readOnly
                   value={lobbyUrl}
-                  className="block w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-base text-slate-700"
+                  className="block w-full rounded-xl border-0 bg-slate-50 px-4 py-3 text-base text-slate-700 ring-1 ring-slate-200"
                 />
                 <button
                   onClick={copyToClipboard}
@@ -331,31 +344,36 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50 sm:p-8">
+            {/* QR Code Card */}
+            <div className="rounded-3xl bg-white p-8 shadow-lg shadow-slate-200/50 ring-1 ring-slate-100">
               <h2 className="mb-4 text-xl font-semibold text-slate-900">QR Code</h2>
               {qrCode ? (
                 <div className="flex flex-col items-center">
-                  <Image
-                    src={qrCode}
-                    alt="QR Code for lobby"
-                    width={200}
-                    height={200}
-                    className="rounded-xl"
-                  />
-                  <p className="mt-4 text-center text-base text-slate-600">
+                  <div className="rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-100">
+                    <Image
+                      src={qrCode}
+                      alt="QR Code for lobby"
+                      width={180}
+                      height={180}
+                    />
+                  </div>
+                  <p className="mt-4 text-center text-sm text-slate-600">
                     Scan to access the Deal Room lobby
                   </p>
                   <a
                     href={qrCode}
                     download={`qrcode-${listingId}.png`}
-                    className="mt-4 text-base text-blue-600 hover:underline"
+                    className="mt-4 inline-flex items-center gap-2 text-base font-medium text-blue-600 hover:text-blue-700"
                   >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
                     Download QR Code
                   </a>
                 </div>
               ) : (
-                <div className="flex h-48 items-center justify-center rounded-xl bg-slate-100">
-                  <p className="text-base text-slate-500">QR code loading...</p>
+                <div className="flex h-48 items-center justify-center rounded-2xl bg-slate-50">
+                  <p className="text-base text-slate-500">Loading QR code...</p>
                 </div>
               )}
             </div>

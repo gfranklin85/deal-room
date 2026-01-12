@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 
@@ -96,96 +95,110 @@ export default function SubmitOfferPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
-      <Header showBack backHref={`/lobby/${listingId}`} backLabel="Back to Lobby" />
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+      <Header showBack backHref={`/lobby/${listingId}`} backLabel="Back" />
 
-      <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
-        <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/50">
-          <div className="bg-gradient-to-r from-blue-900 to-blue-800 px-6 py-6 text-white sm:px-8">
-            <h1 className="text-2xl font-bold">Submit an Offer</h1>
-            <p className="mt-2 text-base text-blue-200">
-              Upload your offer document and provide your details.
-            </p>
+      <div className="mx-auto max-w-2xl px-6 py-10">
+        {/* Page Header */}
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 shadow-lg shadow-blue-500/25">
+            <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
           </div>
+          <h1 className="text-3xl font-bold text-slate-900">Submit Your Offer</h1>
+          <p className="mt-2 text-lg text-slate-600">
+            Upload your offer document and provide your details
+          </p>
+        </div>
 
-          <div className="p-6 sm:p-8">
-            {error && (
-              <div className="mb-6 flex items-center gap-3 rounded-xl bg-red-50 px-4 py-4 text-base text-red-700">
-                <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        {/* Main Form Card */}
+        <div className="rounded-3xl bg-white p-8 shadow-lg shadow-slate-200/50 ring-1 ring-slate-100">
+          {error && (
+            <div className="mb-6 flex items-center gap-3 rounded-2xl bg-red-50 px-5 py-4 ring-1 ring-red-100">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-red-100">
+                <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {error}
               </div>
-            )}
+              <p className="text-base text-red-700">{error}</p>
+            </div>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* File Upload */}
-              <div>
-                <label className="block text-base font-medium text-slate-700">
-                  Offer Document <span className="text-red-500">*</span>
-                </label>
-                <p className="mt-1 text-sm text-slate-500">
-                  Upload your fully executed offer (PDF, JPG, or PNG, max 10MB)
-                </p>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* File Upload */}
+            <div>
+              <label className="block text-base font-semibold text-slate-900">
+                Offer Document <span className="text-red-500">*</span>
+              </label>
+              <p className="mt-1 text-sm text-slate-500">
+                Upload your fully executed offer (PDF, JPG, or PNG, max 10MB)
+              </p>
 
-                {!selectedFile ? (
-                  <div className="mt-3">
-                    <label
-                      htmlFor="offerDocument"
-                      className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-10 transition-colors hover:border-blue-400 hover:bg-blue-50/50"
-                    >
-                      <svg className="h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              {!selectedFile ? (
+                <div className="mt-3">
+                  <label
+                    htmlFor="offerDocument"
+                    className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 px-6 py-12 transition-all hover:border-blue-400 hover:bg-blue-50/50"
+                  >
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-lg">
+                      <svg className="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
-                      <span className="mt-4 text-base font-medium text-slate-700">
-                        Click to upload or drag and drop
-                      </span>
-                      <span className="mt-1 text-sm text-slate-500">
-                        PDF, JPG, or PNG up to 10MB
-                      </span>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        id="offerDocument"
-                        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                ) : (
-                  <div className="mt-3 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-5 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-                        <svg className="h-6 w-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-base font-medium text-slate-900 truncate max-w-[250px]">
-                          {selectedFile.name}
-                        </p>
-                        <p className="text-sm text-slate-500">
-                          {formatFileSize(selectedFile.size)}
-                        </p>
-                      </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleRemoveFile}
-                      className="rounded-lg p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
-                    >
-                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <span className="mt-4 text-base font-medium text-slate-900">
+                      Click to upload or drag and drop
+                    </span>
+                    <span className="mt-1 text-sm text-slate-500">
+                      PDF, JPG, or PNG up to 10MB
+                    </span>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      id="offerDocument"
+                      accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              ) : (
+                <div className="mt-3 flex items-center justify-between rounded-2xl bg-emerald-50 px-5 py-4 ring-1 ring-emerald-200/50">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100">
+                      <svg className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
-                    </button>
+                    </div>
+                    <div>
+                      <p className="text-base font-medium text-slate-900 truncate max-w-[250px]">
+                        {selectedFile.name}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {formatFileSize(selectedFile.size)}
+                      </p>
+                    </div>
                   </div>
-                )}
-              </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveFile}
+                    className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-white hover:text-slate-600"
+                  >
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Agent Details */}
+            <div className="space-y-5 rounded-2xl bg-slate-50 p-6">
+              <h3 className="text-base font-semibold text-slate-900">Agent Information</h3>
 
               <div>
-                <label htmlFor="buyerAgentName" className="block text-base font-medium text-slate-700">
-                  Buyer&apos;s Agent Name <span className="text-red-500">*</span>
+                <label htmlFor="buyerAgentName" className="block text-sm font-medium text-slate-700">
+                  Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -194,13 +207,13 @@ export default function SubmitOfferPage() {
                   value={formData.buyerAgentName}
                   onChange={handleChange}
                   required
-                  className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-1.5 block w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-900 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500"
                   placeholder="Jane Smith"
                 />
               </div>
 
               <div>
-                <label htmlFor="buyerAgentLicense" className="block text-base font-medium text-slate-700">
+                <label htmlFor="buyerAgentLicense" className="block text-sm font-medium text-slate-700">
                   License Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -210,13 +223,13 @@ export default function SubmitOfferPage() {
                   value={formData.buyerAgentLicense}
                   onChange={handleChange}
                   required
-                  className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-1.5 block w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-900 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500"
                   placeholder="RE-123456"
                 />
               </div>
 
               <div>
-                <label htmlFor="buyerAgentEmail" className="block text-base font-medium text-slate-700">
+                <label htmlFor="buyerAgentEmail" className="block text-sm font-medium text-slate-700">
                   Email Address <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -226,54 +239,61 @@ export default function SubmitOfferPage() {
                   value={formData.buyerAgentEmail}
                   onChange={handleChange}
                   required
-                  className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="mt-1.5 block w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-900 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500"
                   placeholder="agent@example.com"
                 />
               </div>
+            </div>
 
-              <div className="rounded-xl bg-blue-50 p-5">
-                <p className="text-base font-medium text-blue-900">By submitting, you confirm that:</p>
-                <ul className="mt-3 space-y-2 text-base text-blue-800">
-                  <li className="flex items-center gap-3">
-                    <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            {/* Confirmation */}
+            <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-violet-50 p-6 ring-1 ring-blue-100">
+              <p className="text-base font-semibold text-slate-900">By submitting, you confirm that:</p>
+              <ul className="mt-4 space-y-3">
+                <li className="flex items-center gap-3 text-slate-700">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100">
+                    <svg className="h-3.5 w-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    The offer document is fully executed and signed
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </div>
+                  The offer document is fully executed and signed
+                </li>
+                <li className="flex items-center gap-3 text-slate-700">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100">
+                    <svg className="h-3.5 w-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    You are a licensed real estate agent
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </div>
+                  You are a licensed real estate agent
+                </li>
+                <li className="flex items-center gap-3 text-slate-700">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100">
+                    <svg className="h-3.5 w-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
-                    Submission does not guarantee acceptance
-                  </li>
-                </ul>
-              </div>
+                  </div>
+                  Submission does not guarantee acceptance
+                </li>
+              </ul>
+            </div>
 
-              <button
-                type="submit"
-                disabled={isSubmitting || !selectedFile}
-                className="w-full rounded-xl bg-gradient-to-r from-blue-900 to-blue-800 px-6 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Submitting...
-                  </span>
-                ) : (
-                  'Submit Offer'
-                )}
-              </button>
-            </form>
-          </div>
+            <button
+              type="submit"
+              disabled={isSubmitting || !selectedFile}
+              className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-6 py-4 text-lg font-semibold text-white shadow-xl shadow-blue-500/25 transition-all hover:shadow-2xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:transform-none disabled:hover:shadow-xl"
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Submitting...
+                </span>
+              ) : (
+                'Submit Offer'
+              )}
+            </button>
+          </form>
         </div>
 
         <p className="mt-8 text-center text-sm text-slate-400">
