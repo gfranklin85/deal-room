@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/components/Header';
-import { Listing, OFFER_STATUS_LABELS } from '@/types/listing';
+import { Listing, Offer, OFFER_STATUS_LABELS, OFFER_OUTCOME_LABELS, OfferOutcome } from '@/types/listing';
 
 interface ListingWithExists extends Listing {
   exists?: boolean;
@@ -21,6 +21,8 @@ export default function AdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [qrCode, setQrCode] = useState<string | null>(null);
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [updatingOffer, setUpdatingOffer] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     address: '',
@@ -73,10 +75,57 @@ export default function AdminPage() {
     }
   }, [listingId]);
 
+  const fetchOffers = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/listings/${listingId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.offers) {
+          setOffers(data.offers);
+        }
+      }
+    } catch {
+      // Offers are optional in admin view
+    }
+  }, [listingId]);
+
   useEffect(() => {
     fetchListing();
     fetchQRCode();
-  }, [fetchListing, fetchQRCode]);
+    fetchOffers();
+  }, [fetchListing, fetchQRCode, fetchOffers]);
+
+  const updateOfferStatus = async (offerId: string, outcome: OfferOutcome) => {
+    setUpdatingOffer(offerId);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/offers/${offerId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listingId, outcome }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update offer status');
+      }
+
+      // Refresh offers and listing
+      await fetchOffers();
+      await fetchListing();
+
+      if (outcome === 'selected') {
+        setSuccess('Offer selected. Notifications sent to all buyers.');
+      } else {
+        setSuccess('Offer status updated.');
+      }
+      setTimeout(() => setSuccess(null), 5000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update offer');
+    } finally {
+      setUpdatingOffer(null);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -581,6 +630,92 @@ export default function AdminPage() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Offers Section */}
+        <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50 sm:p-8">
+          <h2 className="mb-6 text-xl font-semibold text-slate-900">
+            Submitted Offers ({offers.length})
+          </h2>
+
+          {offers.length === 0 ? (
+            <div className="rounded-xl bg-slate-50 p-8 text-center">
+              <svg className="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p className="mt-4 text-lg text-slate-600">No offers submitted yet</p>
+              <p className="mt-2 text-base text-slate-500">
+                Share your lobby link to start receiving offers.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {offers.map((offer) => (
+                <div
+                  key={offer.id}
+                  className={`rounded-xl border p-5 transition-colors ${
+                    offer.outcome === 'selected'
+                      ? 'border-green-200 bg-green-50'
+                      : offer.outcome === 'not_selected'
+                      ? 'border-slate-200 bg-slate-50'
+                      : 'border-slate-200 bg-white'
+                  }`}
+                >
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3">
+                        <p className="text-lg font-medium text-slate-900">
+                          {offer.buyerAgentName}
+                        </p>
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            offer.outcome === 'selected'
+                              ? 'bg-green-100 text-green-800'
+                              : offer.outcome === 'not_selected'
+                              ? 'bg-slate-200 text-slate-600'
+                              : offer.outcome === 'under_review'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {OFFER_OUTCOME_LABELS[offer.outcome]}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-sm text-slate-500">
+                        License: {offer.buyerAgentLicense}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {offer.buyerAgentEmail}
+                      </p>
+                      <p className="mt-2 text-xs text-slate-400">
+                        Submitted: {new Date(offer.submittedAt).toLocaleString()}
+                      </p>
+                    </div>
+
+                    {/* Action Buttons */}
+                    {offer.outcome !== 'selected' && offer.outcome !== 'not_selected' && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => updateOfferStatus(offer.id, 'selected')}
+                          disabled={updatingOffer === offer.id}
+                          className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                        >
+                          {updatingOffer === offer.id ? 'Updating...' : 'Select'}
+                        </button>
+                        <button
+                          onClick={() => updateOfferStatus(offer.id, 'not_selected')}
+                          disabled={updatingOffer === offer.id}
+                          className="rounded-lg bg-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-300 disabled:opacity-50"
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

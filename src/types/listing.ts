@@ -5,6 +5,8 @@ export type OfferStatus =
   | 'review_in_progress'
   | 'deadline_passed';
 
+export type OfferOutcome = 'pending' | 'under_review' | 'selected' | 'not_selected';
+
 export interface Listing {
   id: string;
   address: string;
@@ -20,6 +22,7 @@ export interface Listing {
   offerDeadline?: string; // ISO date string
   reviewWindow?: string; // e.g., "Friday 2pm-5pm"
   showOfferCount?: boolean; // Whether to display offer count publicly
+  listingAgentEmail?: string; // For notifications
   createdAt: string;
   updatedAt: string;
 }
@@ -31,6 +34,7 @@ export interface Offer {
   buyerAgentName: string;
   buyerAgentLicense: string;
   buyerAgentEmail: string;
+  outcome: OfferOutcome;
   // Note: No price or details visible in MVP
 }
 
@@ -40,4 +44,11 @@ export const OFFER_STATUS_LABELS: Record<OfferStatus, string> = {
   multiple_offers: 'Multiple offers received',
   review_in_progress: 'Offer review in progress',
   deadline_passed: 'Offer deadline passed',
+};
+
+export const OFFER_OUTCOME_LABELS: Record<OfferOutcome, string> = {
+  pending: 'Pending',
+  under_review: 'Under Review',
+  selected: 'Selected',
+  not_selected: 'Not Selected',
 };

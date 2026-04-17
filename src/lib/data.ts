@@ -1,4 +1,4 @@
-import { Listing, Offer } from '@/types/listing';
+import { Listing, Offer, OfferOutcome } from '@/types/listing';
 import { v4 as uuidv4 } from 'uuid';
 
 // In-memory data store (replace with real database in production)
@@ -96,7 +96,7 @@ export function getOffers(listingId: string): Offer[] {
 
 export function createOffer(
   listingId: string,
-  data: Omit<Offer, 'id' | 'listingId' | 'submittedAt'>
+  data: Omit<Offer, 'id' | 'listingId' | 'submittedAt' | 'outcome'>
 ): Offer {
   // Auto-create listing if it doesn't exist
   let listing = listings.get(listingId);
@@ -109,6 +109,7 @@ export function createOffer(
     id: uuidv4(),
     listingId,
     submittedAt: new Date().toISOString(),
+    outcome: 'pending',
   };
 
   const listingOffers = offers.get(listingId) || [];
@@ -133,4 +134,49 @@ export function createOffer(
 
 export function getOfferCount(listingId: string): number {
   return (offers.get(listingId) || []).length;
+}
+
+export function getOffer(listingId: string, offerId: string): Offer | undefined {
+  const listingOffers = offers.get(listingId) || [];
+  return listingOffers.find((o) => o.id === offerId);
+}
+
+export function updateOfferOutcome(
+  listingId: string,
+  offerId: string,
+  outcome: OfferOutcome
+): Offer | undefined {
+  const listingOffers = offers.get(listingId) || [];
+  const offerIndex = listingOffers.findIndex((o) => o.id === offerId);
+
+  if (offerIndex === -1) return undefined;
+
+  listingOffers[offerIndex] = {
+    ...listingOffers[offerIndex],
+    outcome,
+  };
+
+  offers.set(listingId, listingOffers);
+  return listingOffers[offerIndex];
+}
+
+// When one offer is selected, mark all others as not_selected
+export function selectOffer(listingId: string, offerId: string): Offer | undefined {
+  const listingOffers = offers.get(listingId) || [];
+  let selectedOffer: Offer | undefined;
+
+  const updatedOffers = listingOffers.map((offer) => {
+    if (offer.id === offerId) {
+      selectedOffer = { ...offer, outcome: 'selected' as OfferOutcome };
+      return selectedOffer;
+    }
+    return { ...offer, outcome: 'not_selected' as OfferOutcome };
+  });
+
+  offers.set(listingId, updatedOffers);
+
+  // Update listing status to review_in_progress
+  updateListing(listingId, { offerStatus: 'review_in_progress' });
+
+  return selectedOffer;
 }

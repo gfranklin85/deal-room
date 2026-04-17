@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getListing, updateListing, createListingWithId } from '@/lib/data';
+import { getListing, updateListing, createListingWithId, getOffers } from '@/lib/data';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -8,6 +8,7 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { id } = await params;
   const listing = getListing(id);
+  const offers = getOffers(id);
 
   if (!listing) {
     // Return empty shell instead of 404 - Deal Room is an inbox, not a validator
@@ -21,10 +22,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       offerStatus: 'no_offers',
       showOfferCount: false,
       exists: false,
+      offers: [],
     });
   }
 
-  return NextResponse.json({ ...listing, exists: true });
+  return NextResponse.json({ ...listing, exists: true, offers });
 }
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
